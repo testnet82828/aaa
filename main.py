@@ -122,15 +122,28 @@ st.set_page_config(page_title="Plant Disease Classifier", page_icon="🌿")
 @st.cache_resource
 def download_model():
     model_path = "trained_model/plant_disease_prediction_model.h5"
-    if not os.path.exists(model_path):
-        os.makedirs("trained_model", exist_ok=True)
-        url = "https://drive.google.com/uc?id=YOUR_FILE_ID"  # Replace with your Google Drive file ID
-        st.write(f"Downloading model from Google Drive to: {model_path}")
-        try:
-            gdown.download(url, model_path, quiet=False)
-        except Exception as e:
-            st.error(f"Failed to download model from Google Drive: {e}")
-            raise
+    # Check if file exists and is valid size
+    if os.path.exists(model_path):
+        file_size = os.path.getsize(model_path)
+        st.write(f"Existing file size: {file_size} bytes")
+        if file_size < 10000:  # Likely a Git LFS pointer
+            st.write("Existing file is too small, likely a Git LFS pointer. Redownloading...")
+            os.remove(model_path)  # Remove the pointer file
+        else:
+            st.write(f"Model path: {model_path}")
+            st.write(f"File exists: {os.path.exists(model_path)}")
+            st.write(f"File size: {file_size} bytes")
+            return model_path
+    
+    # Download from Google Drive
+    os.makedirs("trained_model", exist_ok=True)
+    url = "https://drive.google.com/file/d/1lUuIzhcCdZEDmqfSFJcdw44na2qdeQyR/view?usp=drivesdk"  # Replace with your Google Drive file ID
+    st.write(f"Downloading model from Google Drive to: {model_path}")
+    try:
+        gdown.download(url, model_path, quiet=False)
+    except Exception as e:
+        st.error(f"Failed to download model from Google Drive: {e}")
+        raise
     st.write(f"Model path: {model_path}")
     st.write(f"File exists: {os.path.exists(model_path)}")
     st.write(f"File size: {os.path.getsize(model_path)} bytes")
