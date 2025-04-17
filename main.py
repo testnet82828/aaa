@@ -10,6 +10,7 @@ from supabase import create_client, Client
 from datetime import datetime
 import google.generativeai as genai
 import gdown
+import h5py
 
 # Clear cache to avoid stale model files
 st.cache_resource.clear()
@@ -137,7 +138,7 @@ def download_model():
     
     # Download from Google Drive
     os.makedirs("trained_model", exist_ok=True)
-    url = "https://drive.google.com/file/d/1lUuIzhcCdZEDmqfSFJcdw44na2qdeQyR/view?usp=drivesdk"  # Replace with your Google Drive file ID
+    url = "https://drive.google.com/file/d/1lUuIzhcCdZEDmqfSFJcdw44na2qdeQyR/view?usp=drivesdk"  # Replace with your actual file ID
     st.write(f"Downloading model from Google Drive to: {model_path}")
     try:
         gdown.download(url, model_path, quiet=False)
